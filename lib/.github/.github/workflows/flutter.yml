@@ -1,0 +1,33 @@
+name: Build APK
+
+# سيعمل على أي push أو pull request لأي branch
+on:
+  push: 
+    branches-ignore: []  # لا نتجاهل أي branch
+  pull_request:
+    branches-ignore: []
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # استعراض ملفات المستودع
+      - uses: actions/checkout@v3
+
+      # تثبيت Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'
+
+      # تثبيت الـ dependencies
+      - run: flutter pub get
+
+      # بناء APK
+      - run: flutter build apk --release
+
+      # رفع APK كـ artifact
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
